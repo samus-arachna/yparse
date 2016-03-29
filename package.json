@@ -1,7 +1,7 @@
 {
   "name": "yparse",
   "version": "1.0.0",
-  "description": "russian yves rocher site parser and exporter for yadnex market",
+  "description": "russian yves rocher site parser and exporter for yandex market",
   "main": "parse.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,6 @@
     "async": "^2.0.0-rc.2",
     "cheerio": "^0.20.0",
     "request": "^2.69.0",
-    "xml-writer": "^1.6.0"
+    "xmlbuilder": "^8.0.0"
   }
 }
