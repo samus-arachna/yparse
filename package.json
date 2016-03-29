@@ -1,13 +1,13 @@
 {
   "name": "yparse",
   "version": "1.0.0",
-  "description": "",
+  "description": "russian yves rocher site parser and exporter for yadnex market",
   "main": "parse.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "umren@yandex.ru",
   "license": "ISC",
   "dependencies": {
     "async": "^2.0.0-rc.2",
