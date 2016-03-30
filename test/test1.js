@@ -15,7 +15,7 @@ request(siteMapRootUrl, (error, response, html) => {
 
   // for each sitemap.. make request
   let products = [];
-  let locationsLength = locations.length;
+  const locationsLength = locations.length;
   let locationsComplete = 0;
 
   locations.forEach((locationUrl) => {
