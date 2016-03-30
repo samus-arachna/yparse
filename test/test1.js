@@ -22,21 +22,25 @@ request(siteMapRootUrl, (error, response, html) => {
 
       let $ = cheerio.load(html);
 
+      // filtering only products
       $('loc').each((i, e) => {
-        productsUrl.push($(e).text());
+        if ($(e).text().includes('/p/')) {
+          productsUrl.push($(e).text());
+        }
       });
 
       locationsComplete++;
 
       if (locationsComplete == locationsLength) {
-        console.log('Loaded all sitemaps, starting to parse products.');
+        console.log('Loaded all sitemaps, starting to parse products');
         console.log('Number of products: ' + productsUrl.length);
+
+        productsUrl.forEach((productUrl) => {
+          //console.log(productUrl);
+        });
       }
     });
-
   });
-
-  // get products from all
 });
 
 // FUNCTIONS
