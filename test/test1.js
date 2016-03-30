@@ -2,7 +2,6 @@
 
 let request = require('request');
 let cheerio = require('cheerio');
-let async = require('async');
 
 const siteMapRootUrl = 'http://www.yves-rocher.ru/sitemap.xml';
 
@@ -13,26 +12,25 @@ request(siteMapRootUrl, (error, response, html) => {
 
   const locations = getSitemapsLocations($);
 
-  // for each sitemap.. make request
-  let products = [];
-  const locationsLength = locations.length;
+  let productsUrl = [];
   let locationsComplete = 0;
+  const locationsLength = locations.length;
 
   locations.forEach((locationUrl) => {
-
     request(locationUrl, (error, response, html) => {
       if (error) throw new Error('Could not get locationUrl');
 
       let $ = cheerio.load(html);
 
       $('loc').each((i, e) => {
-        products.push($(e).text());
+        productsUrl.push($(e).text());
       });
 
       locationsComplete++;
+
       if (locationsComplete == locationsLength) {
-        console.log(products.length);
-        console.log('Everything is ready!');
+        console.log('Loaded all sitemaps, starting to parse products.');
+        console.log('Number of products: ' + productsUrl.length);
       }
     });
 
