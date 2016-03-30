@@ -24,8 +24,9 @@ request(siteMapRootUrl, (error, response, html) => {
 
       // filtering only products
       $('loc').each((i, e) => {
-        if ($(e).text().includes('/p/')) {
-          productsUrl.push($(e).text());
+        let text = $(e).text();
+        if (text.includes('/p/')) {
+          productsUrl.push(text);
         }
       });
 
