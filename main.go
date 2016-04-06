@@ -17,6 +17,7 @@ func main() {
 	fmt.Println(len(productLocations))
 }
 
+// getting all product locations
 func getProductLocations(xmlData []string) []string {
 	locations := []string{}
 
@@ -35,7 +36,7 @@ func getProductLocations(xmlData []string) []string {
 	return productLocations
 }
 
-// getting main sitemap
+// getting locations from xml
 func getLocations(xmlURL string) []string {
 	resp, err := http.Get(xmlURL)
 	if err != nil {
