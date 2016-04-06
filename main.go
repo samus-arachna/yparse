@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -16,7 +17,6 @@ func main() {
 	fmt.Println(len(productLocations))
 }
 
-// TODO
 func getProductLocations(xmlData []string) []string {
 	locations := []string{}
 
@@ -24,7 +24,15 @@ func getProductLocations(xmlData []string) []string {
 		locations = append(locations, getLocations(loc)...)
 	}
 
-	return locations
+	productLocations := []string{}
+
+	for _, loc := range locations {
+		if strings.Contains(loc, "/p/") {
+			productLocations = append(productLocations, loc)
+		}
+	}
+
+	return productLocations
 }
 
 // getting main sitemap
