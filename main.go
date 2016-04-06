@@ -11,17 +11,24 @@ import (
 const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 
 func main() {
-	locations := getMainSitemap(sitemapLocation)
-	fmt.Println(locations)
+	sitemapLocations := getLocations(sitemapLocation)
+	productLocations := getProductLocations(sitemapLocations)
+	fmt.Println(len(productLocations))
 }
 
 // TODO
-func getSecondarySitemaps(xmlData string) {
-	//z := html.NewTokenizer(xmlData)
+func getProductLocations(xmlData []string) []string {
+	locations := []string{}
+
+	for _, loc := range xmlData {
+		locations = append(locations, getLocations(loc)...)
+	}
+
+	return locations
 }
 
 // getting main sitemap
-func getMainSitemap(xmlURL string) []string {
+func getLocations(xmlURL string) []string {
 	resp, err := http.Get(xmlURL)
 	if err != nil {
 		log.Fatal(err)
@@ -29,8 +36,8 @@ func getMainSitemap(xmlURL string) []string {
 
 	locations := []string{}
 	token := html.NewTokenizer(resp.Body)
-
 	depth := 0
+
 	for {
 		tt := token.Next()
 		switch tt {
