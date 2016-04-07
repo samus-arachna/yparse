@@ -32,16 +32,29 @@ func parseProduct(productURL string) {
 
 	productIDWrap := doc.Find(".ref").Text()
 	productCode := parseCode(productIDWrap)
+	fmt.Print("code: ")
 	fmt.Println(productCode)
 
 	productTitle := doc.Find(".product_overview > h1").Text()
-	fmt.Println(productTitle)
+	fmt.Println("title: " + productTitle)
 
 	productDesc := doc.Find(".product_overview .baseline a").Text()
-	fmt.Println(productDesc)
+	fmt.Println("desc: " + productDesc)
 
 	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
-	fmt.Println(productImg)
+	fmt.Println("img: " + productImg)
+
+	productCurrentPrice := doc.Find(".inside .price").Text()
+	fmt.Println("current price: " + strings.TrimSpace(productCurrentPrice))
+
+	productOldPrice := doc.Find(".inside .striped_price").Text()
+	fmt.Println("old price: " + strings.TrimSpace(productOldPrice))
+}
+
+// TODO
+// parse product price out of string
+func parsePrice(price string) {
+
 }
 
 // parse product code out of string
