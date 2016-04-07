@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -29,7 +31,8 @@ func parseProduct(productURL string) {
 	}
 
 	productIDWrap := doc.Find(".ref").Text()
-	parseCode(productIDWrap)
+	productCode := parseCode(productIDWrap)
+	fmt.Println(productCode)
 
 	productTitle := doc.Find(".product_overview > h1").Text()
 	fmt.Println(productTitle)
@@ -41,8 +44,18 @@ func parseProduct(productURL string) {
 	fmt.Println(productImg)
 }
 
-func parseCode(wrap string) {
-	fmt.Println(wrap)
+// parse product code out of string
+func parseCode(wrap string) int {
+	wrapTrimmed := strings.TrimSpace(wrap)
+	wrapSplitted := strings.Split(wrapTrimmed, "-")
+
+	re := regexp.MustCompile("[0-9]+")
+	code, err := strconv.Atoi(re.FindAllString(wrapSplitted[0], -1)[0])
+	if err != nil {
+		return 0
+	}
+
+	return code
 }
 
 // getting all product locations
