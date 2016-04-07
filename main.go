@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
+
 	"golang.org/x/net/html"
 )
 
@@ -14,7 +16,29 @@ const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 func main() {
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
-	fmt.Println(len(productLocations))
+
+	parseProduct(productLocations[250])
+}
+
+// TODO
+// parse single product
+func parseProduct(productURL string) {
+	doc, err := goquery.NewDocument(productURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	productTitle := doc.Find(".product_overview > h1").Text()
+	fmt.Println(productTitle)
+
+	productDesc := doc.Find(".product_overview .baseline a").Text()
+	fmt.Println(productDesc)
+	/*
+		doc.Find(".txt_2column").Each(func(i int, s *goquery.Selection) {
+			productTitle := s.Find("h1").Text()
+			fmt.Println(productTitle)
+		})
+	*/
 }
 
 // getting all product locations
