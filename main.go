@@ -28,17 +28,21 @@ func parseProduct(productURL string) {
 		log.Fatal(err)
 	}
 
+	productIDWrap := doc.Find(".ref").Text()
+	parseCode(productIDWrap)
+
 	productTitle := doc.Find(".product_overview > h1").Text()
 	fmt.Println(productTitle)
 
 	productDesc := doc.Find(".product_overview .baseline a").Text()
 	fmt.Println(productDesc)
-	/*
-		doc.Find(".txt_2column").Each(func(i int, s *goquery.Selection) {
-			productTitle := s.Find("h1").Text()
-			fmt.Println(productTitle)
-		})
-	*/
+
+	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
+	fmt.Println(productImg)
+}
+
+func parseCode(wrap string) {
+	fmt.Println(wrap)
 }
 
 // getting all product locations
