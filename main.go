@@ -19,19 +19,21 @@ func main() {
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
 
-	parseProduct(productLocations[250])
+	parseProduct(productLocations[251])
 }
 
 // TODO
-// parse single product
+// parse single product should return a map(?)
 func parseProduct(productURL string) {
 	doc, err := goquery.NewDocument(productURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	productIDWrap := doc.Find(".ref").Text()
-	productCode := parseCode(productIDWrap)
+	fmt.Println("url: " + productURL)
+
+	productCodeWrap := doc.Find(".ref").Text()
+	productCode := parseCode(productCodeWrap)
 	fmt.Print("code: ")
 	fmt.Println(productCode)
 
@@ -44,17 +46,24 @@ func parseProduct(productURL string) {
 	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
 	fmt.Println("img: " + productImg)
 
-	productCurrentPrice := doc.Find(".inside .price").Text()
-	fmt.Println("current price: " + strings.TrimSpace(productCurrentPrice))
+	productCurrentPriceWrap := doc.Find(".inside .price").Text()
+	productCurrentPrice := parsePrice(productCurrentPriceWrap)
+	fmt.Println("price: " + productCurrentPrice)
 
-	productOldPrice := doc.Find(".inside .striped_price").Text()
-	fmt.Println("old price: " + strings.TrimSpace(productOldPrice))
+	productOldPriceWrap := doc.Find(".inside .striped_price").Text()
+	productOldPrice := parsePrice(productOldPriceWrap)
+	fmt.Println("old price: " + productOldPrice)
 }
 
 // TODO
 // parse product price out of string
-func parsePrice(price string) {
+func parsePrice(wrap string) string {
+	priceTrimmed := strings.TrimSpace(wrap)
+	re := regexp.MustCompile("[0-9]+([,.][0-9]+)")
+	numbers := re.FindAllString(priceTrimmed, -1)
+	price := strings.Join(numbers, "")
 
+	return price
 }
 
 // parse product code out of string
