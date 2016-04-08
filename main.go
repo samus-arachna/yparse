@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -19,43 +18,45 @@ func main() {
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
 
-	parseProduct(productLocations[251])
+	product := parseProduct(productLocations[251])
+	fmt.Println(product)
 }
 
-// TODO
 // parse single product should return a map(?)
-func parseProduct(productURL string) {
+func parseProduct(productURL string) map[string]string {
 	doc, err := goquery.NewDocument(productURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("url: " + productURL)
+	product := map[string]string{}
+
+	product["url"] = productURL
 
 	productCodeWrap := doc.Find(".ref").Text()
 	productCode := parseCode(productCodeWrap)
-	fmt.Print("code: ")
-	fmt.Println(productCode)
+	product["code"] = productCode
 
 	productTitle := doc.Find(".product_overview > h1").Text()
-	fmt.Println("title: " + productTitle)
+	product["title"] = productTitle
 
 	productDesc := doc.Find(".product_overview .baseline a").Text()
-	fmt.Println("desc: " + productDesc)
+	product["desc"] = productDesc
 
 	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
-	fmt.Println("img: " + productImg)
+	product["img"] = productImg
 
 	productCurrentPriceWrap := doc.Find(".inside .price").Text()
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
-	fmt.Println("price: " + productCurrentPrice)
+	product["price"] = productCurrentPrice
 
 	productOldPriceWrap := doc.Find(".inside .striped_price").Text()
 	productOldPrice := parsePrice(productOldPriceWrap)
-	fmt.Println("old price: " + productOldPrice)
+	product["priceOld"] = productOldPrice
+
+	return product
 }
 
-// TODO
 // parse product price out of string
 func parsePrice(wrap string) string {
 	priceTrimmed := strings.TrimSpace(wrap)
@@ -67,14 +68,14 @@ func parsePrice(wrap string) string {
 }
 
 // parse product code out of string
-func parseCode(wrap string) int {
+func parseCode(wrap string) string {
 	wrapTrimmed := strings.TrimSpace(wrap)
 	wrapSplitted := strings.Split(wrapTrimmed, "-")
 
 	re := regexp.MustCompile("[0-9]+")
-	code, err := strconv.Atoi(re.FindAllString(wrapSplitted[0], -1)[0])
-	if err != nil {
-		return 0
+	code := re.FindAllString(wrapSplitted[0], -1)[0]
+	if len(code) == 0 {
+		return "0"
 	}
 
 	return code
