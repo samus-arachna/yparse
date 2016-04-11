@@ -11,13 +11,18 @@ func main() {
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
 
-	fmt.Println(productLocations[253])
-	product := parseProduct(productLocations[253])
-	fmt.Println(product)
+	/*
+		fmt.Println(productLocations[250])
+		product, err := parseProduct(productLocations[250])
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(product)
+	*/
 
 	// TODO parse first 15 products in a series of 5
-	//products := productLocations[250:260]
-	//runParse(products, 5)
+	products := productLocations[250:260]
+	runParse(products, 5)
 }
 
 func runParse(products []string, connections int) {
@@ -28,11 +33,17 @@ func runParse(products []string, connections int) {
 	var wg sync.WaitGroup
 
 	// run connections
-	fmt.Println(len(pool))
 	wg.Add(len(pool))
 	for _, product := range pool {
 		go func(product string) {
-			parsed = append(parsed, parseProduct(product))
+			parsedProduct, err := parseProduct(product)
+			if err != nil {
+				fmt.Println(err.Error() + " on link " + product)
+				fmt.Println("")
+				wg.Done()
+				return
+			}
+			parsed = append(parsed, parsedProduct)
 			defer wg.Done()
 		}(product)
 	}

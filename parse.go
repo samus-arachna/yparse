@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"regexp"
@@ -11,7 +12,7 @@ import (
 )
 
 // parse single product should return a map(?)
-func parseProduct(productURL string) map[string]string {
+func parseProduct(productURL string) (map[string]string, error) {
 	doc, err := goquery.NewDocument(productURL)
 	if err != nil {
 		log.Fatal(err)
@@ -22,33 +23,48 @@ func parseProduct(productURL string) map[string]string {
 	product["url"] = productURL
 
 	productCodeWrap := doc.Find(".ref").Text()
+	if len(productCodeWrap) == 0 {
+		return nil, errors.New("No product code wrap was found")
+	}
 	productCode := parseCode(productCodeWrap)
 	product["code"] = productCode
 
 	productTitle := doc.Find(".product_overview > h1").Text()
+	if len(productTitle) == 0 {
+		return nil, errors.New("No product title was found.")
+	}
 	product["title"] = productTitle
 
 	productDesc := doc.Find(".product_overview .baseline a").Text()
+	if len(productDesc) == 0 {
+		return nil, errors.New("No product description was found.")
+	}
 	product["desc"] = productDesc
 
 	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
+	if len(productImg) == 0 {
+		return nil, errors.New("No product image was found.")
+	}
 	product["img"] = productImg
 
-	productCurrentPriceWrap := doc.Find(".inside .price").Text()
+	productCurrentPriceWrap := doc.Find(".product_overview .price").Text()
+	if len(productCurrentPriceWrap) == 0 {
+		return nil, errors.New("No product current price was found.")
+	}
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
 	product["price"] = productCurrentPrice
 
-	productOldPriceWrap := doc.Find(".inside .striped_price").Text()
+	productOldPriceWrap := doc.Find(".product_overview .striped_price").Text()
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 
-	return product
+	return product, nil
 }
 
 // parse product price out of string
 func parsePrice(wrap string) string {
 	priceTrimmed := strings.TrimSpace(wrap)
-	re := regexp.MustCompile("[0-9]+([,.][0-9]+)")
+	re := regexp.MustCompile("([0-9]+)|([,.][0-9]+)")
 	numbers := re.FindAllString(priceTrimmed, -1)
 	price := strings.Join(numbers, "")
 
