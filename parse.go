@@ -2,14 +2,63 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"
 )
+
+func runParse(products []string, connections int) []map[string]string {
+	// get first slice == number of connections
+	parsed := []map[string]string{}
+	pool := products[0:connections]
+	products = products[connections:]
+	var wg sync.WaitGroup
+
+	// run connections
+	for len(products) > 0 {
+		wg.Add(len(pool))
+
+		for _, product := range pool {
+			go func(product string) {
+				parsedProduct, err := parseProduct(product)
+				if err != nil {
+					fmt.Println(err.Error() + " on link " + product)
+					fmt.Println("")
+					wg.Done()
+					return
+				}
+				parsed = append(parsed, parsedProduct)
+				defer wg.Done()
+			}(product)
+		}
+
+		wg.Wait()
+
+		if len(products) > connections {
+			pool = products[0:connections]
+			products = products[connections:]
+		} else {
+			if len(pool) == len(products) {
+				products = []string{}
+			} else {
+				pool = products[:]
+			}
+		}
+	}
+
+	for _, item := range parsed {
+		fmt.Println(item)
+		fmt.Println("")
+	}
+
+	return parsed
+}
 
 // parse single product should return a map(?)
 func parseProduct(productURL string) (map[string]string, error) {
