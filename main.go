@@ -12,20 +12,26 @@ func main() {
 	productLocations := getProductLocations(sitemapLocations)
 
 	/*
-		fmt.Println(productLocations[250])
-		product, err := parseProduct(productLocations[250])
+		fmt.Println(productLocations[258])
+		fmt.Println(" --- ")
+		product, err := parseProduct(productLocations[258])
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Println(product)
 	*/
 
-	// TODO parse first 15 products in a series of 5
-	products := productLocations[250:260]
-	runParse(products, 3)
+	// run parse pool
+	products := productLocations[250:255]
+	runParse(products, 2)
 }
 
 func runParse(products []string, connections int) []map[string]string {
+	for _, p := range products {
+		fmt.Println(p)
+	}
+	fmt.Println(" --- ")
+
 	// get first slice == number of connections
 	parsed := []map[string]string{}
 	pool := products[0:connections]
@@ -35,6 +41,7 @@ func runParse(products []string, connections int) []map[string]string {
 	// run connections
 	for len(products) > 0 {
 		wg.Add(len(pool))
+
 		for _, product := range pool {
 			go func(product string) {
 				parsedProduct, err := parseProduct(product)
@@ -48,19 +55,23 @@ func runParse(products []string, connections int) []map[string]string {
 				defer wg.Done()
 			}(product)
 		}
+
 		wg.Wait()
 
 		if len(products) > connections {
 			pool = products[0:connections]
 			products = products[connections:]
 		} else {
-			pool = products[:]
-			products = []string{}
+			if len(pool) == len(products) {
+				products = []string{}
+			} else {
+				pool = products[:]
+			}
 		}
 	}
 
 	for _, item := range parsed {
-		fmt.Println(item)
+		fmt.Println(item["url"])
 		fmt.Println("")
 	}
 
