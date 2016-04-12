@@ -27,11 +27,6 @@ func main() {
 }
 
 func runParse(products []string, connections int) []map[string]string {
-	for _, p := range products {
-		fmt.Println(p)
-	}
-	fmt.Println(" --- ")
-
 	// get first slice == number of connections
 	parsed := []map[string]string{}
 	pool := products[0:connections]
@@ -71,7 +66,7 @@ func runParse(products []string, connections int) []map[string]string {
 	}
 
 	for _, item := range parsed {
-		fmt.Println(item["url"])
+		fmt.Println(item)
 		fmt.Println("")
 	}
 

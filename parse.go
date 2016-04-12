@@ -96,7 +96,7 @@ func getProductLocations(xmlData []string) []string {
 	productLocations := []string{}
 
 	for _, loc := range locations {
-		if strings.Contains(loc, "/p/") {
+		if strings.Contains(loc, "/p/") && !strings.Contains(loc, "//p/") {
 			productLocations = append(productLocations, loc)
 		}
 	}
