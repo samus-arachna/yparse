@@ -22,10 +22,10 @@ func main() {
 
 	// TODO parse first 15 products in a series of 5
 	products := productLocations[250:260]
-	runParse(products, 5)
+	runParse(products, 3)
 }
 
-func runParse(products []string, connections int) {
+func runParse(products []string, connections int) []map[string]string {
 	// get first slice == number of connections
 	parsed := []map[string]string{}
 	pool := products[0:connections]
@@ -33,28 +33,36 @@ func runParse(products []string, connections int) {
 	var wg sync.WaitGroup
 
 	// run connections
-	wg.Add(len(pool))
-	for _, product := range pool {
-		go func(product string) {
-			parsedProduct, err := parseProduct(product)
-			if err != nil {
-				fmt.Println(err.Error() + " on link " + product)
-				fmt.Println("")
-				wg.Done()
-				return
-			}
-			parsed = append(parsed, parsedProduct)
-			defer wg.Done()
-		}(product)
+	for len(products) > 0 {
+		wg.Add(len(pool))
+		for _, product := range pool {
+			go func(product string) {
+				parsedProduct, err := parseProduct(product)
+				if err != nil {
+					fmt.Println(err.Error() + " on link " + product)
+					fmt.Println("")
+					wg.Done()
+					return
+				}
+				parsed = append(parsed, parsedProduct)
+				defer wg.Done()
+			}(product)
+		}
+		wg.Wait()
+
+		if len(products) > connections {
+			pool = products[0:connections]
+			products = products[connections:]
+		} else {
+			pool = products[:]
+			products = []string{}
+		}
 	}
-	wg.Wait()
 
 	for _, item := range parsed {
 		fmt.Println(item)
 		fmt.Println("")
 	}
 
-	// get another slice, until no more products
-
-	// signalize complete
+	return parsed
 }
