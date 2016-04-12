@@ -60,7 +60,7 @@ func runParse(products []string, connections int) []map[string]string {
 	return parsed
 }
 
-// parse single product should return a map(?)
+// parse single product
 func parseProduct(productURL string) (map[string]string, error) {
 	doc, err := goquery.NewDocument(productURL)
 	if err != nil {
