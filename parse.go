@@ -71,41 +71,60 @@ func parseProduct(productURL string) (map[string]string, error) {
 
 	product["url"] = productURL
 
+	// seeking product code (id)
 	productCodeWrap := doc.Find(".ref").Text()
 	if len(productCodeWrap) == 0 {
 		return nil, errors.New("No product code wrap was found")
 	}
 	productCode := parseCode(productCodeWrap)
 	product["code"] = productCode
+	// END seeking product code (id)
 
+	// seeking product title (name)
 	productTitle := doc.Find(".product_overview > h1").Text()
 	if len(productTitle) == 0 {
 		return nil, errors.New("No product title was found.")
 	}
 	product["title"] = productTitle
+	// END seeking product title (name)
 
+	// seeking product description in two places
 	productDesc := doc.Find(".product_overview .baseline a").Text()
 	if len(productDesc) == 0 {
-		return nil, errors.New("No product description was found.")
+		productDesc, err = doc.Find(".txt_2column p").Html()
+		if err != nil {
+			return nil, errors.New("No product description was found.")
+		}
+		productDesc = strings.Split(productDesc, "<br")[0]
+		if len(productDesc) == 0 {
+			return nil, errors.New("No second product description was found.")
+		}
 	}
 	product["desc"] = productDesc
+	// END seeking product description in two places
 
+	// seeking product preview image
 	productImg, _ := doc.Find("img#product_slider_image").Attr("src")
 	if len(productImg) == 0 {
 		return nil, errors.New("No product image was found.")
 	}
 	product["img"] = productImg
+	// END seeking product preview image
 
+	// seeking product main (current) price
 	productCurrentPriceWrap := doc.Find(".product_overview .price").Text()
 	if len(productCurrentPriceWrap) == 0 {
 		return nil, errors.New("No product current price was found.")
 	}
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
 	product["price"] = productCurrentPrice
+	// END seeking product main (current) price
 
+	// seeking product old price
 	productOldPriceWrap := doc.Find(".product_overview .striped_price").Text()
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
+	// END seeking product old price
 
 	return product, nil
 }

@@ -8,5 +8,5 @@ func main() {
 
 	// run parse pool
 	products := productLocations[250:255]
-	runParse(products, 3)
+	runParse(products, 4)
 }
