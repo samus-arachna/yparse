@@ -7,6 +7,6 @@ func main() {
 	productLocations := getProductLocations(sitemapLocations)
 
 	// run parse pool
-	products := productLocations[250:255]
-	runParse(products, 4)
+	products := productLocations[250:260]
+	runParse(products, 3)
 }

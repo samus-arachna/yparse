@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -14,6 +15,10 @@ import (
 )
 
 func runParse(products []string, connections int) []map[string]string {
+	// stats for debug
+	overall := len(products)
+	real := 0
+
 	// get first slice == number of connections
 	parsed := []map[string]string{}
 	pool := products[0:connections]
@@ -25,6 +30,7 @@ func runParse(products []string, connections int) []map[string]string {
 		wg.Add(len(pool))
 
 		for _, product := range pool {
+			real++
 			go func(product string) {
 				parsedProduct, err := parseProduct(product)
 				if err != nil {
@@ -44,7 +50,7 @@ func runParse(products []string, connections int) []map[string]string {
 			pool = products[0:connections]
 			products = products[connections:]
 		} else {
-			if len(pool) == len(products) {
+			if reflect.DeepEqual(pool, products) {
 				products = []string{}
 			} else {
 				pool = products[:]
@@ -56,6 +62,11 @@ func runParse(products []string, connections int) []map[string]string {
 		fmt.Println(item)
 		fmt.Println("")
 	}
+
+	fmt.Print("overall products to parse: ")
+	fmt.Println(overall)
+	fmt.Print("real number of products parsed: ")
+	fmt.Println(real)
 
 	return parsed
 }
