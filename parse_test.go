@@ -10,7 +10,25 @@ import (
 )
 
 func TestParsePrice(t *testing.T) {
+	first := parsePrice("   1770 рублей")
+	if first != "1770" {
+		t.Fatal("Price is not valid")
+	}
 
+	second := parsePrice("330,00 р")
+	if second != "330,00" {
+		t.Fatal("Price is not valid")
+	}
+
+	third := parsePrice("  1,770.00  ")
+	if third != "1,770.00" {
+		t.Fatal("Price is not valid")
+	}
+
+	fourth := parsePrice("  1000 dollars  ")
+	if fourth != "1000" {
+		t.Fatal("Price is not valid")
+	}
 }
 
 func TestParseCode(t *testing.T) {
