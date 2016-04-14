@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -32,7 +33,7 @@ func runParse(products []string, connections int) []map[string]string {
 		for _, product := range pool {
 			real++
 			go func(product string) {
-				parsedProduct, err := parseProduct(product)
+				parsedProduct, err := parseProduct(product, true)
 				if err != nil {
 					fmt.Println(err.Error() + " on link " + product)
 					fmt.Println("")
@@ -72,11 +73,8 @@ func runParse(products []string, connections int) []map[string]string {
 }
 
 // parse single product
-func parseProduct(productURL string) (map[string]string, error) {
-	doc, err := goquery.NewDocument(productURL)
-	if err != nil {
-		log.Fatal(err)
-	}
+func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
+	doc := getDocumentType(productURL, fromURL)
 
 	product := map[string]string{}
 
@@ -102,16 +100,21 @@ func parseProduct(productURL string) (map[string]string, error) {
 	// seeking product description in two places
 	productDesc := doc.Find(".product_overview .baseline a").Text()
 	if len(productDesc) == 0 {
-		productDesc, err = doc.Find(".txt_2column p").Html()
+		productDescSecond, err := doc.Find(".txt_2column p").Html()
 		if err != nil {
 			return nil, errors.New("No product description was found.")
 		}
-		productDesc = strings.Split(productDesc, "<br")[0]
-		if len(productDesc) == 0 {
+
+		productDescSecond = strings.Split(productDesc, "<br")[0]
+		if len(productDescSecond) == 0 {
 			return nil, errors.New("No second product description was found.")
 		}
+
+		product["desc"] = productDescSecond
+	} else {
+		product["desc"] = productDesc
 	}
-	product["desc"] = productDesc
+
 	// END seeking product description in two places
 
 	// seeking product preview image
@@ -138,6 +141,29 @@ func parseProduct(productURL string) (map[string]string, error) {
 	// END seeking product old price
 
 	return product, nil
+}
+
+func getDocumentType(productPath string, fromURL bool) *goquery.Document {
+	if fromURL {
+		doc, err := goquery.NewDocument(productPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return doc
+	}
+
+	bytes, err := os.Open(productPath)
+	if err != nil {
+		log.Fatal("File not found.")
+	}
+
+	doc, err := goquery.NewDocumentFromReader(bytes)
+	if err != nil {
+		log.Fatal("File not read.")
+	}
+
+	return doc
 }
 
 // parse product price out of string

@@ -9,6 +9,41 @@ import (
 	"time"
 )
 
+func TestParseProduct1(t *testing.T) {
+	first := "data/product1.html"
+
+	product, err := parseProduct(first, false)
+	if err != nil {
+		t.Fatal("Cant parse product")
+	}
+
+	if product["code"] != "82283" {
+		t.Fatal("Code is not valid")
+	}
+
+	if product["title"] != "Крем-Заполнитель Глубоких Морщин" {
+		t.Fatal("Title is not valid")
+	}
+
+	if product["desc"] !=
+		"Мгновенно сокращает даже самые глубокие морщины и заполняет их изнутри" {
+		t.Fatal("Desc is not valid")
+	}
+
+	if product["img"] !=
+		"http://w23.yves-rocher-statics.com/medias/sys_master/retina/images/h54/h34/8864784318494.jpg" {
+		t.Fatal("Image path is not valid")
+	}
+
+	if product["price"] != "1,049" {
+		t.Fatal("Price is not valid")
+	}
+
+	if product["priceOld"] != "1,390" {
+		t.Fatal("Old price is not valid")
+	}
+}
+
 func TestParsePrice(t *testing.T) {
 	first := parsePrice("   1770 рублей")
 	if first != "1770" {
@@ -56,7 +91,6 @@ func TestParseCode(t *testing.T) {
 func TestProductLocations(t *testing.T) {
 	locations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(locations)
-
 	if len(productLocations) == 0 {
 		t.Fatal("Locations length was 0")
 	}
