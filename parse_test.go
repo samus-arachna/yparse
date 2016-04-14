@@ -33,7 +33,7 @@ func TestRunParse(t *testing.T) {
 	_, count := runParse(randLoc, 3)
 
 	if len(randLoc) != count {
-		t.Fatal("You parsed less products, then you had.")
+		t.Fatal("You parsed less products, then you initially had.")
 	}
 }
 
