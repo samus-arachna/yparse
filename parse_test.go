@@ -71,7 +71,7 @@ func TestProductLocations(t *testing.T) {
 
 	response, err := http.Get(randLoc)
 	if err != nil {
-		t.Fatal("Can't get a random location via http" + err.Error())
+		t.Fatal("Can't get a random location via http " + err.Error())
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
