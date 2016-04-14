@@ -29,6 +29,11 @@ func TestParsePrice(t *testing.T) {
 	if fourth != "1000" {
 		t.Fatal("Price is not valid")
 	}
+
+	fifth := parsePrice("")
+	if fifth != "0" {
+		t.Fatal("Price is not valid")
+	}
 }
 
 func TestParseCode(t *testing.T) {

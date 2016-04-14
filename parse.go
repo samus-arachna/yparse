@@ -146,6 +146,9 @@ func parsePrice(wrap string) string {
 	re := regexp.MustCompile("([0-9]+)|([,.][0-9]+)")
 	numbers := re.FindAllString(priceTrimmed, -1)
 	price := strings.Join(numbers, "")
+	if len(price) == 0 {
+		return "0"
+	}
 
 	return price
 }
