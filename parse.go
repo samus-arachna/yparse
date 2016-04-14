@@ -15,10 +15,9 @@ import (
 	"golang.org/x/net/html"
 )
 
-func runParse(products []string, connections int) []map[string]string {
-	// stats for debug
-	overall := len(products)
-	real := 0
+func runParse(products []string, connections int) ([]map[string]string, int) {
+	// how much products was parsed
+	count := 0
 
 	// get first slice == number of connections
 	parsed := []map[string]string{}
@@ -31,7 +30,7 @@ func runParse(products []string, connections int) []map[string]string {
 		wg.Add(len(pool))
 
 		for _, product := range pool {
-			real++
+			count++
 			go func(product string) {
 				parsedProduct, err := parseProduct(product, true)
 				if err != nil {
@@ -59,17 +58,14 @@ func runParse(products []string, connections int) []map[string]string {
 		}
 	}
 
-	for _, item := range parsed {
-		fmt.Println(item)
-		fmt.Println("")
-	}
+	/*
+		for _, item := range parsed {
+			fmt.Println(item)
+			fmt.Println("")
+		}
+	*/
 
-	fmt.Print("overall products to parse: ")
-	fmt.Println(overall)
-	fmt.Print("real number of products parsed: ")
-	fmt.Println(real)
-
-	return parsed
+	return parsed, count
 }
 
 // parse single product
@@ -90,7 +86,7 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 	// END seeking product code (id)
 
 	// seeking product title (name)
-	productTitle := doc.Find(".product_overview > h1").Text()
+	productTitle := strings.TrimSpace(doc.Find(".product_overview > h1").Text())
 	if len(productTitle) == 0 {
 		return nil, errors.New("No product title was found.")
 	}
@@ -98,14 +94,14 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 	// END seeking product title (name)
 
 	// seeking product description in two places
-	productDesc := doc.Find(".product_overview .baseline a").Text()
+	productDesc := strings.TrimSpace(doc.Find(".product_overview .baseline a").Text())
 	if len(productDesc) == 0 {
 		productDescSecond, err := doc.Find(".txt_2column p").Html()
 		if err != nil {
 			return nil, errors.New("No product description was found.")
 		}
 
-		productDescSecond = strings.Split(productDesc, "<br")[0]
+		productDescSecond = strings.Split(productDescSecond, "<br")[0]
 		if len(productDescSecond) == 0 {
 			return nil, errors.New("No second product description was found.")
 		}
@@ -126,7 +122,7 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 	// END seeking product preview image
 
 	// seeking product main (current) price
-	productCurrentPriceWrap := doc.Find(".product_overview .price").Text()
+	productCurrentPriceWrap := strings.TrimSpace(doc.Find(".product_overview .price").Text())
 	if len(productCurrentPriceWrap) == 0 {
 		return nil, errors.New("No product current price was found.")
 	}
@@ -135,7 +131,7 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 	// END seeking product main (current) price
 
 	// seeking product old price
-	productOldPriceWrap := doc.Find(".product_overview .striped_price").Text()
+	productOldPriceWrap := strings.TrimSpace(doc.Find(".product_overview .striped_price").Text())
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 	// END seeking product old price

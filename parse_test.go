@@ -9,10 +9,49 @@ import (
 	"time"
 )
 
-func TestParseProduct1(t *testing.T) {
-	first := "data/product1.html"
+func TestRunParse(t *testing.T) {
+	locations := getLocations(sitemapLocation)
+	productLocations := getProductLocations(locations)
+	if len(productLocations) == 0 {
+		t.Fatal("Locations length was 0")
+	}
 
-	product, err := parseProduct(first, false)
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	randStart := rand.Intn(len(productLocations))
+	randEnd := 0
+
+	if (randStart + 10) > len(productLocations) {
+		randStart = len(productLocations) - 15
+		randEnd = len(productLocations) - 5
+	} else {
+		randEnd = randStart + 10
+	}
+
+	randLoc := productLocations[randStart:randEnd]
+
+	_, count := runParse(randLoc, 3)
+
+	if len(randLoc) != count {
+		t.Fatal("You parsed less products, then you had.")
+	}
+}
+
+func TestParseProduct2(t *testing.T) {
+	pr := "data/product2.html"
+
+	_, err := parseProduct(pr, false)
+	if err != nil {
+		return
+	}
+
+	t.Fatal("This product have no current price, so it can't be parsed.")
+}
+
+func TestParseProduct1(t *testing.T) {
+	pr := "data/product1.html"
+
+	product, err := parseProduct(pr, false)
 	if err != nil {
 		t.Fatal("Cant parse product")
 	}
