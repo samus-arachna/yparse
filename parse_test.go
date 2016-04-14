@@ -2,58 +2,61 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
-	"os"
+	"math/rand"
+	"net/http"
+	"strings"
 	"testing"
-
-	"github.com/PuerkitoBio/goquery"
+	"time"
 )
 
-func TestProductFindTitle(t *testing.T) {
-	bytes, err := os.Open("test/product1.html")
-	if err != nil {
-		t.Fatal("cant open product1.html")
+func TestProductLocations(t *testing.T) {
+	locations := getLocations(sitemapLocation)
+	productLocations := getProductLocations(locations)
+
+	if len(productLocations) == 0 {
+		t.Fatal("Locations length was 0")
 	}
 
-	doc, err := goquery.NewDocumentFromReader(bytes)
-	if err != nil {
-		t.Fail()
+	for _, loc := range productLocations {
+		if !strings.Contains(loc, "http://") {
+			t.Fatal("Some of the links didn't contained http")
+		}
 	}
 
-	title := doc.Find(".product_overview > h1").Text()
-	if len(title) == 0 {
-		t.Fatal("Title not found.")
+	rand.Seed(time.Now().UTC().UnixNano())
+	randLoc := productLocations[rand.Intn(len(productLocations))]
+
+	response, err := http.Get(randLoc)
+	if err != nil {
+		t.Fatal("Can't get a random location via http")
 	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		t.Fatal("Can't get a location body")
+	}
+
+	if len(string(body)) == 0 {
+		t.Fatal("Location body is empty")
+	}
+
+	defer response.Body.Close()
 }
 
-func TestOpenSitemap(t *testing.T) {
-	bytes, err := ioutil.ReadFile("test/sitemap.xml")
-	if err != nil {
-		t.Fail()
+func TestGetLocations(t *testing.T) {
+	locations := getLocations(sitemapLocation)
+
+	if len(locations) == 0 {
+		t.Fatal("Locations length was 0")
 	}
 
-	sitemapFile := string(bytes)
+	for _, loc := range locations {
+		if !strings.Contains(loc, "http://") {
+			t.Fatal("Some of the links didn't contained http")
+		}
 
-	if len(sitemapFile) == 0 {
-		t.Fail()
-	}
-}
-
-func TestLoadSiteMap(t *testing.T) {
-	bytes, err := os.Open("test/sitemap.xml")
-	if err != nil {
-		t.Fail()
-	}
-
-	doc, err := goquery.NewDocumentFromReader(bytes)
-	if err != nil {
-		log.Fatal(err)
-		t.Fail()
-	}
-
-	locs := doc.Find("loc")
-
-	if len(locs.Text()) == 0 {
-		t.Fail()
+		if !strings.Contains(loc, "yves-rocher.ru") {
+			t.Fatal("Some of the links didn't contained yves-rocher.ru")
+		}
 	}
 }
