@@ -156,12 +156,12 @@ func parseCode(wrap string) string {
 	wrapSplitted := strings.Split(wrapTrimmed, "-")
 
 	re := regexp.MustCompile("[0-9]+")
-	code := re.FindAllString(wrapSplitted[0], -1)[0]
+	code := re.FindAllString(wrapSplitted[0], -1)
 	if len(code) == 0 {
 		return "0"
 	}
 
-	return code
+	return code[0]
 }
 
 // getting all product locations

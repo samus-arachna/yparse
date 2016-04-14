@@ -9,6 +9,27 @@ import (
 	"time"
 )
 
+func TestParsePrice(t *testing.T) {
+
+}
+
+func TestParseCode(t *testing.T) {
+	first := parseCode("Код&nbsp;82283&nbsp;- Тюбик&nbsp;20&nbsp;мл")
+	if first != "82283" {
+		t.Fatal("Code is not valid")
+	}
+
+	second := parseCode("Код 04487 - Чтото")
+	if second != "04487" {
+		t.Fatal("Code is not valid")
+	}
+
+	third := parseCode("Code - What")
+	if third != "0" {
+		t.Fatal("Code is not valid")
+	}
+}
+
 func TestProductLocations(t *testing.T) {
 	locations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(locations)
@@ -18,6 +39,10 @@ func TestProductLocations(t *testing.T) {
 	}
 
 	for _, loc := range productLocations {
+		if !strings.Contains(loc, "/p/") {
+			t.Fatal("Some of the links didn't contained /p/")
+		}
+
 		if !strings.Contains(loc, "http://") {
 			t.Fatal("Some of the links didn't contained http")
 		}
@@ -28,7 +53,7 @@ func TestProductLocations(t *testing.T) {
 
 	response, err := http.Get(randLoc)
 	if err != nil {
-		t.Fatal("Can't get a random location via http")
+		t.Fatal("Can't get a random location via http" + err.Error())
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
