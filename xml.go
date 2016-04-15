@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
-	"os"
 )
 
 func getXMLDocument(products []map[string]string) {
@@ -40,9 +40,12 @@ func getXMLProduct(product map[string]string) {
 		Description: product["desc"],
 	}
 
-	enc := xml.NewEncoder(os.Stdout)
+	var b bytes.Buffer
+	enc := xml.NewEncoder(&b)
 	enc.Indent(" ", "  ")
 	if err := enc.Encode(v); err != nil {
 		fmt.Printf("error: %v\n", err)
 	}
+
+	fmt.Println(&b)
 }
