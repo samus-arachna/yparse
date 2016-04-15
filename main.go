@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 
 func main() {
@@ -10,12 +8,8 @@ func main() {
 	productLocations := getProductLocations(sitemapLocations)
 
 	// run parse pool
-	locs := productLocations[250:255]
-	products, _ := runParse(locs, 3)
+	locs := productLocations[250:254]
+	products, _ := runParse(locs, 2)
 
-	for _, product := range products {
-		getXMLProduct(product)
-		fmt.Println(" ")
-		fmt.Println(" ")
-	}
+	getXMLDocument(products)
 }

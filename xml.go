@@ -7,10 +7,16 @@ import (
 )
 
 func getXMLDocument(products []map[string]string) {
+	productsXML := ""
 
+	for _, product := range products {
+		productsXML += "\n" + getXMLProduct(product)
+	}
+
+	fmt.Println(productsXML)
 }
 
-func getXMLProduct(product map[string]string) {
+func getXMLProduct(product map[string]string) string {
 	type Product struct {
 		XMLName     xml.Name `xml:"offer"`
 		ID          string   `xml:"id,attr"`
@@ -47,5 +53,5 @@ func getXMLProduct(product map[string]string) {
 		fmt.Printf("error: %v\n", err)
 	}
 
-	fmt.Println(&b)
+	return b.String()
 }
