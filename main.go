@@ -5,25 +5,20 @@ import "fmt"
 const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 
 func main() {
+
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
 
 	// run parse pool
 	locs := productLocations[250:255]
-	products, count := runParse(locs, 3)
+	products, _ := runParse(locs, 3)
 
-	for _, e := range products {
-		fmt.Println(e)
-		fmt.Println("")
+	for _, product := range products {
+		getXMLProduct(product)
+		fmt.Println(" ")
+		fmt.Println(" ")
 	}
-	fmt.Print("Parsed products: ")
-	fmt.Println(count)
-	/*
-		link := "http://www.yves-rocher.ru/c/kol-e-i-braslet--beskonecnost--/p/yr.rukz.RN81907"
-		product, err := parseProduct(link, true)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		fmt.Println(product)
-	*/
+
+	fmt.Println(" ")
+
 }
