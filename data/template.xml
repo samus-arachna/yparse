@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="%DATE%">
+  <shop>
+    <name>Yves Rocher</name>
+    <company>yves-rocher</company>
+    <url>http://www.yves-rocher.ru</url>
+    <currencies>
+      <currency plus="0" rate="1" id="RUB"/>
+    </currencies>
+    <categories>su
+      %CATEGORIES%
+    </categories>
+    <offers>
+      %OFFERS%
+    </offers>
+  </shop>
+</yml_catalog>
