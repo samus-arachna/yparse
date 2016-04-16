@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"strings"
 )
 
 func getXMLDocument(products []map[string]string) {
@@ -13,7 +16,20 @@ func getXMLDocument(products []map[string]string) {
 		productsXML += "\n" + getXMLProduct(product)
 	}
 
-	fmt.Println(productsXML)
+	tpl := getXMLTemplate()
+	tpl = strings.Replace(tpl, "%OFFERS%", productsXML, 1)
+
+	fmt.Println(tpl)
+}
+
+func getXMLTemplate() string {
+	path := "data/template.xml"
+	dat, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return string(dat)
 }
 
 func getXMLProduct(product map[string]string) string {
@@ -33,7 +49,7 @@ func getXMLProduct(product map[string]string) string {
 	}
 
 	v := &Product{
-		ID:          product["id"],
+		ID:          product["code"],
 		Available:   "true",
 		URL:         product["url"],
 		Price:       product["price"],
