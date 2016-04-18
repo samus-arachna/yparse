@@ -142,7 +142,7 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 
 func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 	if fromURL {
-		resp := prepareClient(productPath, 60)
+		resp := prepareClient(productPath, 120)
 
 		doc, err := goquery.NewDocumentFromResponse(resp)
 		if err != nil {
@@ -166,7 +166,8 @@ func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 }
 
 // prepare client with custom settings
-// for this parser we need to set a custom timeout
+// for this parse to work we need to set a custom timeout
+// site is just too damn slow
 func prepareClient(productPath string, setSeconds time.Duration) *http.Response {
 	timeout := time.Duration(setSeconds * time.Second)
 	client := http.Client{
