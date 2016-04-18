@@ -59,19 +59,31 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 		}
 	}
 
-	/*
-		for _, item := range parsed {
-			fmt.Println(item)
-			fmt.Println("")
-		}
-	*/
+	// outputting parsed products
+	for _, item := range parsed {
+		fmt.Println(item)
+		fmt.Println("")
+	}
 
 	return parsed, count
+}
+
+type category struct {
+	id       int
+	parentID int
+	name     string
+}
+
+// parse category
+func parseCategory(doc *goquery.Document) {
+
 }
 
 // parse single product
 func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 	doc := getDocumentType(productURL, fromURL)
+
+	parseCategory(doc)
 
 	product := map[string]string{}
 
