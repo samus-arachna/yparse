@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"
@@ -141,7 +142,9 @@ func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
 
 func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 	if fromURL {
-		doc, err := goquery.NewDocument(productPath)
+		resp := prepareClient(productPath, 60)
+
+		doc, err := goquery.NewDocumentFromResponse(resp)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -160,6 +163,22 @@ func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 	}
 
 	return doc
+}
+
+// prepare client with custom settings
+// for this parser we need to set a custom timeout
+func prepareClient(productPath string, setSeconds time.Duration) *http.Response {
+	timeout := time.Duration(setSeconds * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+
+	resp, err := client.Get(productPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return resp
 }
 
 // parse product price out of string

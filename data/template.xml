@@ -7,7 +7,7 @@
     <currencies>
       <currency plus="0" rate="1" id="RUB"/>
     </currencies>
-    <categories>su
+    <categories>
       %CATEGORIES%
     </categories>
     <offers>

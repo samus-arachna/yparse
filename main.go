@@ -8,7 +8,7 @@ func main() {
 	productLocations := getProductLocations(sitemapLocations)
 
 	// run parse pool
-	locs := productLocations[250:254]
+	locs := productLocations[252:255]
 	products, _ := runParse(locs, 2)
 
 	getXMLDocument(products)
