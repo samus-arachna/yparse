@@ -14,7 +14,7 @@ func main() {
 	runParse(locs, 2)
 
 	// running parse and getting product data
-	products, _ := runParse(locs, 2)
+	products, categories, _ := runParse(locs, 2)
 	// getting xml document output
-	getXMLDocument(products)
+	getXMLDocument(products, categories)
 }

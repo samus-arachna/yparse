@@ -30,7 +30,7 @@ func TestRunParse(t *testing.T) {
 
 	randLoc := productLocations[randStart:randEnd]
 
-	_, count := runParse(randLoc, 3)
+	_, _, count := runParse(randLoc, 3)
 
 	if len(randLoc) != count {
 		t.Fatal("You parsed less products, then you initially had.")

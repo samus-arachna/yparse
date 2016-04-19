@@ -22,7 +22,7 @@ type category struct {
 	name     string
 }
 
-func runParse(products []string, connections int) ([]map[string]string, int) {
+func runParse(products []string, connections int) ([]map[string]string, map[string]category, int) {
 	// how much products was parsed
 	count := 0
 
@@ -79,10 +79,12 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 	*/
 
 	// printing out categories
-	fmt.Println(categories)
-	fmt.Println("")
+	/*
+		fmt.Println(categories)
+		fmt.Println("")
+	*/
 
-	return parsed, count
+	return parsed, categories, count
 }
 
 // parse single product
