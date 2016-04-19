@@ -97,8 +97,6 @@ func parseCategory(doc *goquery.Document, categories *[]category) {
 func parseProduct(productURL string, fromURL bool, categories *[]category) (map[string]string, error) {
 	doc := getDocumentType(productURL, fromURL)
 
-	parseCategory(doc, categories)
-
 	product := map[string]string{}
 
 	product["url"] = productURL
@@ -162,6 +160,14 @@ func parseProduct(productURL string, fromURL bool, categories *[]category) (map[
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
+
+	// parsing single category to product
+
+	// END parsing single category to product
+
+	// parsing category tree
+	parseCategory(doc, categories)
+	// END parsing category tree
 
 	return product, nil
 }
