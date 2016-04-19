@@ -135,7 +135,6 @@ func parseProduct(productURL string, fromURL bool, categories *[]category) (map[
 	} else {
 		product["desc"] = productDesc
 	}
-
 	// END seeking product description in two places
 
 	// seeking product preview image
@@ -161,11 +160,11 @@ func parseProduct(productURL string, fromURL bool, categories *[]category) (map[
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
 
-	// parsing single category to product
+	// TODO parsing single category to product
 
 	// END parsing single category to product
 
-	// parsing category tree
+	// TODO parsing category tree
 	parseCategory(doc, categories)
 	// END parsing category tree
 
