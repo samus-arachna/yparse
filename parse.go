@@ -16,6 +16,12 @@ import (
 	"golang.org/x/net/html"
 )
 
+type category struct {
+	id       int
+	parentID int
+	name     string
+}
+
 func runParse(products []string, connections int) ([]map[string]string, int) {
 	// how much products was parsed
 	count := 0
@@ -24,6 +30,11 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 	parsed := []map[string]string{}
 	pool := products[0:connections]
 	products = products[connections:]
+
+	// init categories
+	categories := []category{}
+
+	// syncing connections
 	var wg sync.WaitGroup
 
 	// run connections
@@ -33,7 +44,7 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 		for _, product := range pool {
 			count++
 			go func(product string) {
-				parsedProduct, err := parseProduct(product, true)
+				parsedProduct, err := parseProduct(product, true, &categories)
 				if err != nil {
 					fmt.Println(err.Error() + " on link " + product)
 					fmt.Println("")
@@ -65,25 +76,28 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 		fmt.Println("")
 	}
 
+	// printing out categories
+	fmt.Println(categories)
+	fmt.Println("")
+
 	return parsed, count
 }
 
-type category struct {
-	id       int
-	parentID int
-	name     string
-}
-
 // parse category
-func parseCategory(doc *goquery.Document) {
-
+func parseCategory(doc *goquery.Document, categories *[]category) {
+	cat := category{
+		id:       1,
+		parentID: 3,
+		name:     "Test Name",
+	}
+	*categories = append(*categories, cat)
 }
 
 // parse single product
-func parseProduct(productURL string, fromURL bool) (map[string]string, error) {
+func parseProduct(productURL string, fromURL bool, categories *[]category) (map[string]string, error) {
 	doc := getDocumentType(productURL, fromURL)
 
-	parseCategory(doc)
+	parseCategory(doc, categories)
 
 	product := map[string]string{}
 
