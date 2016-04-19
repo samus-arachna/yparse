@@ -171,6 +171,10 @@ func parseProduct(productURL string, fromURL bool, categories *map[string]catego
 
 // TODO parse category
 func parseCategory(doc *goquery.Document, categories *map[string]category) {
+
+	// saving last id for parent-child reference after
+	last := ""
+
 	sel := doc.Find(".crumbs a")
 	for i := range sel.Nodes {
 		single := sel.Eq(i)
@@ -185,10 +189,15 @@ func parseCategory(doc *goquery.Document, categories *map[string]category) {
 		if strings.Contains(attr, "/c/") {
 			categoryID := parseCategoryID(attr)
 			categoryName := single.Text()
+			parentID := ""
+
+			if len(last) > 0 {
+				parentID = last
+			}
 
 			newCategory := category{
 				id:       categoryID,
-				parentID: "0",
+				parentID: parentID,
 				name:     categoryName,
 			}
 
@@ -196,6 +205,9 @@ func parseCategory(doc *goquery.Document, categories *map[string]category) {
 			_, exist := (*categories)[categoryID]
 			if !exist {
 				(*categories)[categoryID] = newCategory
+
+				// this will become a parent category
+				last = categoryID
 			}
 		}
 	}
