@@ -40,7 +40,7 @@ func TestRunParse(t *testing.T) {
 func TestParseProduct2(t *testing.T) {
 	pr := "data/product2.html"
 
-	categories := []category{}
+	categories := map[string]category{}
 
 	_, err := parseProduct(pr, false, &categories)
 	if err != nil {
@@ -53,7 +53,7 @@ func TestParseProduct2(t *testing.T) {
 func TestParseProduct1(t *testing.T) {
 	pr := "data/product1.html"
 
-	categories := []category{}
+	categories := map[string]category{}
 
 	product, err := parseProduct(pr, false, &categories)
 	if err != nil {

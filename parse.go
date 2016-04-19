@@ -17,8 +17,8 @@ import (
 )
 
 type category struct {
-	id       int
-	parentID int
+	id       string
+	parentID string
 	name     string
 }
 
@@ -32,7 +32,7 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 	products = products[connections:]
 
 	// init categories
-	categories := []category{}
+	categories := map[string]category{}
 
 	// syncing connections
 	var wg sync.WaitGroup
@@ -71,10 +71,12 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 	}
 
 	// outputting parsed products
-	for _, item := range parsed {
-		fmt.Println(item)
-		fmt.Println("")
-	}
+	/*
+		for _, item := range parsed {
+			fmt.Println(item)
+			fmt.Println("")
+		}
+	*/
 
 	// printing out categories
 	fmt.Println(categories)
@@ -83,18 +85,8 @@ func runParse(products []string, connections int) ([]map[string]string, int) {
 	return parsed, count
 }
 
-// parse category
-func parseCategory(doc *goquery.Document, categories *[]category) {
-	cat := category{
-		id:       1,
-		parentID: 3,
-		name:     "Test Name",
-	}
-	*categories = append(*categories, cat)
-}
-
 // parse single product
-func parseProduct(productURL string, fromURL bool, categories *[]category) (map[string]string, error) {
+func parseProduct(productURL string, fromURL bool, categories *map[string]category) (map[string]string, error) {
 	doc := getDocumentType(productURL, fromURL)
 
 	product := map[string]string{}
@@ -177,6 +169,39 @@ func parseProduct(productURL string, fromURL bool, categories *[]category) (map[
 	return product, nil
 }
 
+// TODO parse category
+func parseCategory(doc *goquery.Document, categories *map[string]category) {
+	sel := doc.Find(".crumbs a")
+	for i := range sel.Nodes {
+		single := sel.Eq(i)
+
+		// checking that href exist on breadcrumb item
+		attr, exist := single.Attr("href")
+		if !exist {
+			return
+		}
+
+		// we need only categories, categories contain /c/
+		if strings.Contains(attr, "/c/") {
+			categoryID := parseCategoryID(attr)
+			categoryName := single.Text()
+
+			newCategory := category{
+				id:       categoryID,
+				parentID: "0",
+				name:     categoryName,
+			}
+
+			// checking that category is not already presented
+			_, exist := (*categories)[categoryID]
+			if !exist {
+				(*categories)[categoryID] = newCategory
+			}
+		}
+	}
+}
+
+// parsing category id
 func parseCategoryID(attr string) string {
 	urlTrimmed := strings.TrimSpace(attr)
 	if len(urlTrimmed) == 0 {
