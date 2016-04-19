@@ -160,23 +160,34 @@ func parseProduct(productURL string, fromURL bool, categories *[]category) (map[
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
 
-	// TODO parsing single category to product
+	// parsing single category to product
 	cat := doc.Find(".crumbs a").Eq(-2)
 	catName := cat.Text()
 	product["categoryName"] = catName
 	catHref, _ := cat.Attr("href")
-	fmt.Println(catHref)
+	catID := parseCategoryID(catHref)
+	product["categoryID"] = catID
 	// END parsing single category to product
 
 	// TODO parsing category tree
 	parseCategory(doc, categories)
+	fmt.Println("")
 	// END parsing category tree
 
 	return product, nil
 }
 
-func parseCategoryID(attr string) {
+func parseCategoryID(attr string) string {
+	urlTrimmed := strings.TrimSpace(attr)
+	if len(urlTrimmed) == 0 {
+		return ""
+	}
+	catID := strings.Split(urlTrimmed, "/")
+	if len(catID) == 0 {
+		return ""
+	}
 
+	return string(catID[len(catID)-1])
 }
 
 func getDocumentType(productPath string, fromURL bool) *goquery.Document {
