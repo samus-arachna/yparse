@@ -99,7 +99,7 @@ func getXMLProduct(product map[string]string) string {
 		Available:   "true",
 		URL:         product["url"],
 		Price:       product["price"],
-		OldPrice:    product["oldprice"],
+		OldPrice:    product["priceOld"],
 		CurrencyID:  "RUB",
 		CategoryID:  product["categoryID"],
 		Picture:     product["img"],

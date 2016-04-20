@@ -21,8 +21,7 @@ func main() {
 
 	// run parse pool
 	fmt.Println("Parsing started.")
-	locs := productLocations[250:350] // example partly parsing
-	// locs := productLocations // full parse
+	locs := productLocations // full parse
 
 	// running parse and getting product data
 	products, categories, _ := runParse(locs, 3)
