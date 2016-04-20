@@ -34,7 +34,12 @@ func getXMLDocument(products []map[string]string, categories map[string]category
 	tpl = strings.Replace(tpl, "%OFFERS%", productsXML, 1)
 	// END writing products to xml file
 
-	fmt.Println(tpl)
+	// writing down xml file to filesystem
+	writeXML(tpl)
+}
+
+func writeXML(xml string) {
+	ioutil.WriteFile("catalog.xml", []byte(xml), 0644)
 }
 
 func getXMLTemplate() string {

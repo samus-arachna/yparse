@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 
 func main() {
@@ -7,14 +9,16 @@ func main() {
 	sitemapLocations := getLocations(sitemapLocation)
 	productLocations := getProductLocations(sitemapLocations)
 
-	// run parse pool
-	locs := productLocations[252:255]
+	if len(productLocations) == 0 {
+		log.Fatal("There is no locations of products to parse.")
+	}
 
-	// TEST just running
-	runParse(locs, 2)
+	// run parse pool
+	// locs := productLocations[252:255] // example partly parsing
+	locs := productLocations
 
 	// running parse and getting product data
-	products, categories, _ := runParse(locs, 2)
+	products, categories, _ := runParse(locs, 3)
 	// getting xml document output
 	getXMLDocument(products, categories)
 }

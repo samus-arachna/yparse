@@ -163,7 +163,7 @@ func parseProduct(productURL string, fromURL bool, categories *map[string]catego
 	product["categoryID"] = catID
 	// END parsing single category to product
 
-	// TODO parsing category tree
+	// parsing category tree
 	parseCategory(doc, categories)
 	// END parsing category tree
 
