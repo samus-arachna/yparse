@@ -15,7 +15,7 @@ func main() {
 
 	// run parse pool
 	// locs := productLocations[252:255] // example partly parsing
-	locs := productLocations
+	locs := productLocations // full parse
 
 	// running parse and getting product data
 	products, categories, _ := runParse(locs, 3)
