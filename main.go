@@ -1,6 +1,9 @@
 package main
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 const sitemapLocation = "http://www.yves-rocher.ru/sitemap.xml"
 
@@ -13,9 +16,13 @@ func main() {
 		log.Fatal("There is no locations of products to parse.")
 	}
 
+	// initiating logging, removing old logs
+	logInit()
+
 	// run parse pool
-	// locs := productLocations[252:255] // example partly parsing
-	locs := productLocations // full parse
+	fmt.Println("Parsing started.")
+	locs := productLocations[250:350] // example partly parsing
+	// locs := productLocations // full parse
 
 	// running parse and getting product data
 	products, categories, _ := runParse(locs, 3)

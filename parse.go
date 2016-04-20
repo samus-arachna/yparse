@@ -2,15 +2,17 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"gopkg.in/cheggaaa/pb.v1"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"
@@ -22,9 +24,13 @@ type category struct {
 	name     string
 }
 
-func runParse(products []string, connections int) ([]map[string]string, map[string]category, int) {
+func runParse(products []string,
+	connections int) ([]map[string]string, map[string]category, int) {
 	// how much products was parsed
 	count := 0
+
+	// progress bar init
+	bar := pb.StartNew(len(products))
 
 	// get first slice == number of connections
 	parsed := []map[string]string{}
@@ -43,11 +49,12 @@ func runParse(products []string, connections int) ([]map[string]string, map[stri
 
 		for _, product := range pool {
 			count++
+			bar.Increment()
 			go func(product string) {
 				parsedProduct, err := parseProduct(product, true, &categories)
 				if err != nil {
-					fmt.Println(err.Error() + " on link " + product)
-					fmt.Println("")
+					logWarning(err.Error() + " on link " +
+						product + " at position " + strconv.Itoa(count))
 					wg.Done()
 					return
 				}
@@ -64,6 +71,7 @@ func runParse(products []string, connections int) ([]map[string]string, map[stri
 		} else {
 			if reflect.DeepEqual(pool, products) {
 				products = []string{}
+				bar.FinishPrint("Parsing complete.")
 			} else {
 				pool = products[:]
 			}
@@ -88,7 +96,8 @@ func runParse(products []string, connections int) ([]map[string]string, map[stri
 }
 
 // parse single product
-func parseProduct(productURL string, fromURL bool, categories *map[string]category) (map[string]string, error) {
+func parseProduct(productURL string,
+	fromURL bool, categories *map[string]category) (map[string]string, error) {
 	doc := getDocumentType(productURL, fromURL)
 
 	product := map[string]string{}
@@ -140,7 +149,8 @@ func parseProduct(productURL string, fromURL bool, categories *map[string]catego
 	// END seeking product preview image
 
 	// seeking product main (current) price
-	productCurrentPriceWrap := strings.TrimSpace(doc.Find(".product_overview .price").Text())
+	productCurrentPriceWrap := strings.TrimSpace(
+		doc.Find(".product_overview .price").Text())
 	if len(productCurrentPriceWrap) == 0 {
 		return nil, errors.New("No product current price was found.")
 	}
@@ -149,7 +159,8 @@ func parseProduct(productURL string, fromURL bool, categories *map[string]catego
 	// END seeking product main (current) price
 
 	// seeking product old price
-	productOldPriceWrap := strings.TrimSpace(doc.Find(".product_overview .striped_price").Text())
+	productOldPriceWrap := strings.TrimSpace(
+		doc.Find(".product_overview .striped_price").Text())
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
