@@ -7,10 +7,24 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"time"
 )
 
 func getXMLDocument(products []map[string]string, categories map[string]category) {
 	tpl := getXMLTemplate()
+
+	// setting date in xml file
+	timeXML := time.Now().Format("02/01/2006 15:04")
+	tpl = strings.Replace(tpl, "%DATE%", timeXML, 1)
+	// END setting date in xml file
+
+	// writing categories to xml file
+	categoriesXML := ""
+	for _, val := range categories {
+		categoriesXML += "\n" + getXMLCategory(val)
+	}
+	tpl = strings.Replace(tpl, "%CATEGORIES%", categoriesXML, 1)
+	// END writing categories to xml file
 
 	// writing products to xml file
 	productsXML := ""
@@ -23,19 +37,29 @@ func getXMLDocument(products []map[string]string, categories map[string]category
 	fmt.Println(tpl)
 }
 
-// TODO
-func getXMLCategory(categories map[string]category) string {
+func getXMLTemplate() string {
+	path := "data/template.xml"
+	dat, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return string(dat)
+}
+
+// getting xml categories list
+func getXMLCategory(cat category) string {
 	type Category struct {
 		XMLName  xml.Name `xml:"category"`
 		ID       string   `xml:"id,attr"`
-		ParentID string   `xml:"parentId,attr"`
-		Value    string
+		ParentID string   `xml:"parentId,attr,omitempty"`
+		Value    string   `xml:",chardata"`
 	}
 
 	v := &Category{
-		ID:       "1337",
-		ParentID: "7331",
-		Value:    "yo",
+		ID:       cat.id,
+		ParentID: cat.parentID,
+		Value:    cat.name,
 	}
 
 	var b bytes.Buffer
@@ -48,16 +72,7 @@ func getXMLCategory(categories map[string]category) string {
 	return b.String()
 }
 
-func getXMLTemplate() string {
-	path := "data/template.xml"
-	dat, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	return string(dat)
-}
-
+// getting xml products list
 func getXMLProduct(product map[string]string) string {
 	type Product struct {
 		XMLName     xml.Name `xml:"offer"`
@@ -82,7 +97,7 @@ func getXMLProduct(product map[string]string) string {
 		OldPrice:    product["oldprice"],
 		CurrencyID:  "RUB",
 		CategoryID:  product["categoryID"],
-		Picture:     product["image"],
+		Picture:     product["img"],
 		Name:        product["title"],
 		Vendor:      "ИВ РОШЕ",
 		Description: product["desc"],

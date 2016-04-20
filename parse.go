@@ -165,13 +165,12 @@ func parseProduct(productURL string, fromURL bool, categories *map[string]catego
 
 	// TODO parsing category tree
 	parseCategory(doc, categories)
-	fmt.Println("")
 	// END parsing category tree
 
 	return product, nil
 }
 
-// TODO parse category
+// parse category
 func parseCategory(doc *goquery.Document, categories *map[string]category) {
 
 	// saving last id for parent-child reference after
