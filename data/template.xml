@@ -8,10 +8,10 @@
       <currency plus="0" rate="1" id="RUB"/>
     </currencies>
     <categories>
-      %CATEGORIES%
+      	%CATEGORIES%
     </categories>
     <offers>
-      %OFFERS%
+      	%OFFERS%
     </offers>
   </shop>
 </yml_catalog>

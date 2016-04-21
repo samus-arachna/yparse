@@ -198,7 +198,7 @@ func parseCategory(doc *goquery.Document, categories *map[string]category) {
 		}
 
 		// we need only categories, categories contain /c/
-		if strings.Contains(attr, "/c/") {
+		if strings.Contains(attr, "/c/") && !strings.Contains(attr, "/p/") {
 			categoryID := parseCategoryID(attr)
 			categoryName := single.Text()
 			parentID := ""
@@ -291,7 +291,13 @@ func parsePrice(wrap string) string {
 		return "0"
 	}
 
-	return price
+	return formatPrice(price)
+}
+
+// TODO
+func formatPrice(price string) string {
+	formattedPrice := strings.Replace(price, ",", "", 1)
+	return formattedPrice
 }
 
 // parse product code out of string

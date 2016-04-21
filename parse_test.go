@@ -114,6 +114,11 @@ func TestParsePrice(t *testing.T) {
 	}
 }
 
+// TODO
+func TestFormatPrice(t *testing.T) {
+
+}
+
 func TestParseCode(t *testing.T) {
 	first := parseCode("Код&nbsp;82283&nbsp;- Тюбик&nbsp;20&nbsp;мл")
 	if first != "82283" {
