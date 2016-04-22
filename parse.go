@@ -164,7 +164,6 @@ func parseProduct(productURL string,
 		doc.Find(".product_overview .price").Text())
 	if len(productCurrentPriceWrap) == 0 {
 		logWarning("No product current price was found. at link " + productURL)
-		product["available"] = "false"
 	}
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
 	product["price"] = productCurrentPrice

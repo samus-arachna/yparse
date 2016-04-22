@@ -37,7 +37,6 @@ func TestRunParse(t *testing.T) {
 	}
 }
 
-// TODO
 func TestParseProduct3(t *testing.T) {
 	pr := "data/product3.html"
 
