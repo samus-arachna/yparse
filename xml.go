@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func getXMLDocument(products []map[string]string, categories map[string]category) {
+func getXMLDocument(products map[string]map[string]string, categories map[string]category) {
 	tpl := getXMLTemplate()
 
 	// setting date in xml file

@@ -25,7 +25,7 @@ type category struct {
 }
 
 func runParse(products []string,
-	connections int) ([]map[string]string, map[string]category, int) {
+	connections int) (map[string]map[string]string, map[string]category, int) {
 	// how much products was parsed
 	count := 0
 
@@ -33,7 +33,10 @@ func runParse(products []string,
 	bar := pb.StartNew(len(products))
 
 	// get first slice == number of connections
-	parsed := []map[string]string{}
+
+	// parsed := []map[string]string{} // OLD
+	parsed := map[string]map[string]string{} // NEW
+
 	pool := products[0:connections]
 	products = products[connections:]
 
@@ -58,7 +61,12 @@ func runParse(products []string,
 					wg.Done()
 					return
 				}
-				parsed = append(parsed, parsedProduct)
+
+				// TODO save product only if it not already exist
+				parsed[parsedProduct["code"]] = parsedProduct
+
+				//parsed = append(parsed, parsedProduct)
+
 				defer wg.Done()
 			}(product)
 		}
