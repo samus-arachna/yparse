@@ -37,17 +37,41 @@ func TestRunParse(t *testing.T) {
 	}
 }
 
+// TODO
+func TestParseProduct3(t *testing.T) {
+	pr := "data/product3.html"
+
+	categories := map[string]category{}
+
+	product, err := parseProduct(pr, false, &categories)
+	if err != nil {
+		t.Fatal("There should be no error")
+	}
+
+	val, _ := product["available"]
+	if val != "false" {
+		t.Fatal("This product is not available")
+	}
+}
+
 func TestParseProduct2(t *testing.T) {
 	pr := "data/product2.html"
 
 	categories := map[string]category{}
 
-	_, err := parseProduct(pr, false, &categories)
+	product, err := parseProduct(pr, false, &categories)
 	if err != nil {
-		return
+		t.Fatal("There should be no error")
 	}
 
-	t.Fatal("This product have no current price, so it can't be parsed.")
+	val, exist := product["available"]
+	if !exist {
+		t.Fatal("Product should have field available")
+	}
+
+	if val != "false" {
+		t.Fatal("This product have no price")
+	}
 }
 
 func TestParseProduct1(t *testing.T) {

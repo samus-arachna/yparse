@@ -173,10 +173,6 @@ func parseProduct(productURL string,
 	// seeking product old price
 	productOldPriceWrap := strings.TrimSpace(
 		doc.Find(".product_overview .striped_price").Text())
-	if len(productOldPriceWrap) == 0 {
-		logWarning("No product old price was found. at link " + productURL)
-		product["available"] = "false"
-	}
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
@@ -189,6 +185,13 @@ func parseProduct(productURL string,
 	catID := parseCategoryID(catHref)
 	product["categoryID"] = catID
 	// END parsing single category to product
+
+	// is product available or not
+	styleAttr, _ := doc.Find(".outOfStock").Attr("style")
+	if len(styleAttr) == 0 {
+		product["available"] = "false"
+	}
+	// END is product available or not
 
 	// parsing category tree
 	parseCategory(doc, categories)
