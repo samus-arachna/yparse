@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-func getXMLDocument(products map[string]map[string]string, categories map[string]category) {
+func getXMLDocument(products map[string]map[string]string,
+	categories map[string]category) {
 	tpl := getXMLTemplate()
 
 	// setting date in xml file
@@ -96,7 +97,7 @@ func getXMLProduct(product map[string]string) string {
 
 	v := &Product{
 		ID:          product["code"],
-		Available:   "true",
+		Available:   product["available"],
 		URL:         product["url"],
 		Price:       product["price"],
 		OldPrice:    product["priceOld"],

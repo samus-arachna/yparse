@@ -112,6 +112,9 @@ func parseProduct(productURL string,
 
 	product["url"] = productURL
 
+	// settings that product is availabe
+	product["available"] = "true"
+
 	// seeking product code (id)
 	productCodeWrap := doc.Find(".ref").Text()
 	if len(productCodeWrap) == 0 {
@@ -160,7 +163,8 @@ func parseProduct(productURL string,
 	productCurrentPriceWrap := strings.TrimSpace(
 		doc.Find(".product_overview .price").Text())
 	if len(productCurrentPriceWrap) == 0 {
-		return nil, errors.New("No product current price was found.")
+		logWarning("No product current price was found. at link " + productURL)
+		product["available"] = "false"
 	}
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
 	product["price"] = productCurrentPrice
@@ -169,6 +173,10 @@ func parseProduct(productURL string,
 	// seeking product old price
 	productOldPriceWrap := strings.TrimSpace(
 		doc.Find(".product_overview .striped_price").Text())
+	if len(productOldPriceWrap) == 0 {
+		logWarning("No product old price was found. at link " + productURL)
+		product["available"] = "false"
+	}
 	productOldPrice := parsePrice(productOldPriceWrap)
 	product["priceOld"] = productOldPrice
 	// END seeking product old price
