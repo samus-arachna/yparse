@@ -78,45 +78,55 @@ func TestParseProduct1(t *testing.T) {
 		t.Fatal("Image path is not valid")
 	}
 
-	if product["price"] != "1,049" {
+	if product["price"] != "1049" {
 		t.Fatal("Price is not valid")
 	}
 
-	if product["priceOld"] != "1,390" {
+	if product["priceOld"] != "1390" {
 		t.Fatal("Old price is not valid")
 	}
 }
 
 func TestParsePrice(t *testing.T) {
+	zero := parsePrice("46")
+	if zero != "46" {
+		t.Fatal("Price is not valid got -> " + zero)
+	}
+
 	first := parsePrice("   1770 рублей")
 	if first != "1770" {
-		t.Fatal("Price is not valid")
+		t.Fatal("Price is not valid got -> " + first)
 	}
 
-	second := parsePrice("330,00 р")
-	if second != "330,00" {
-		t.Fatal("Price is not valid")
+	second := parsePrice("330 р")
+	if second != "330" {
+		t.Fatal("Price is not valid got -> " + second)
 	}
 
-	third := parsePrice("  1,770.00  ")
-	if third != "1,770.00" {
-		t.Fatal("Price is not valid")
+	third := parsePrice("  1,770  ")
+	if third != "1770" {
+		t.Fatal("Price is not valid got -> " + third)
 	}
 
 	fourth := parsePrice("  1000 dollars  ")
 	if fourth != "1000" {
-		t.Fatal("Price is not valid")
+		t.Fatal("Price is not valid got -> " + fourth)
 	}
 
 	fifth := parsePrice("")
 	if fifth != "0" {
-		t.Fatal("Price is not valid")
+		t.Fatal("Price is not valid got -> " + fifth)
 	}
-}
 
-// TODO
-func TestFormatPrice(t *testing.T) {
+	sixth := parsePrice("1,440.50")
+	if sixth != "1440.50" {
+		t.Fatal("Price is not valid got -> " + sixth)
+	}
 
+	ten := parsePrice("46")
+	if ten != "46" {
+		t.Fatal("Price is not valid got -> " + ten)
+	}
 }
 
 func TestParseCode(t *testing.T) {

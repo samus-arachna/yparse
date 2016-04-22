@@ -294,10 +294,9 @@ func parsePrice(wrap string) string {
 	return formatPrice(price)
 }
 
-// TODO
+// formatting a price
 func formatPrice(price string) string {
-	formattedPrice := strings.Replace(price, ",", "", 1)
-	return formattedPrice
+	return strings.Replace(price, ",", "", 1)
 }
 
 // parse product code out of string
