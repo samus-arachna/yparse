@@ -231,13 +231,13 @@ func parseCategory(doc *goquery.Document, categories *map[string]category) {
 				name:     categoryName,
 			}
 
+			// this will become a parent category
+			last = categoryID
+
 			// checking that category is not already presented
 			_, exist := (*categories)[categoryID]
 			if !exist {
 				(*categories)[categoryID] = newCategory
-
-				// this will become a parent category
-				last = categoryID
 			}
 		}
 	}

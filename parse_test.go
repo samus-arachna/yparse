@@ -37,6 +37,18 @@ func TestRunParse(t *testing.T) {
 	}
 }
 
+// TODO
+func TestParseProduct4(t *testing.T) {
+	pr := "data/product4.html"
+
+	categories := map[string]category{}
+
+	_, err := parseProduct(pr, false, &categories)
+	if err != nil {
+		t.Fatal("There should be no error")
+	}
+}
+
 func TestParseProduct3(t *testing.T) {
 	pr := "data/product3.html"
 

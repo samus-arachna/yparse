@@ -21,11 +21,22 @@ func main() {
 
 	// run parse pool
 	fmt.Println("Parsing started.")
-	locs := productLocations[590:600] // partly parse
+	locs := productLocations[595:597] // partly parse
 	//locs := productLocations // full parse
 
 	// running parse and getting product data
-	products, categories, _ := runParse(locs, 3)
+	products, categories, _ := runParse(locs, 1)
+
+	// DEBUG ON
+	for _, v := range categories {
+		fmt.Println(v)
+	}
+	fmt.Println("")
+	for _, p := range products {
+		fmt.Println(p)
+	}
+	// DEBUG OFF
+
 	// getting xml document output
 	getXMLDocument(products, categories)
 }
