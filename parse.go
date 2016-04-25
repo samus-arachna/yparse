@@ -62,10 +62,7 @@ func runParse(products []string,
 					return
 				}
 
-				// TODO save product only if it not already exist
 				parsed[parsedProduct["code"]] = parsedProduct
-
-				//parsed = append(parsed, parsedProduct)
 
 				defer wg.Done()
 			}(product)
@@ -182,6 +179,9 @@ func parseProduct(productURL string,
 	product["categoryName"] = catName
 	catHref, _ := cat.Attr("href")
 	catID := parseCategoryID(catHref)
+	if len(catID) == 0 {
+		return nil, errors.New("No product category was found.")
+	}
 	product["categoryID"] = catID
 	// END parsing single category to product
 
