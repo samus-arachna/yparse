@@ -18,6 +18,8 @@ import (
 	"golang.org/x/net/html"
 )
 
+const zeroString = "0"
+
 type category struct {
 	id       string
 	parentID string
@@ -163,6 +165,9 @@ func parseProduct(productURL string,
 		logWarning("No product current price was found. at link " + productURL)
 	}
 	productCurrentPrice := parsePrice(productCurrentPriceWrap)
+	if productCurrentPrice == zeroString {
+		return nil, errors.New("Product have a price of zero.")
+	}
 	product["price"] = productCurrentPrice
 	// END seeking product main (current) price
 
@@ -176,6 +181,9 @@ func parseProduct(productURL string,
 	// parsing single category to product
 	cat := doc.Find(".crumbs a").Eq(-2)
 	catName := cat.Text()
+	if catName == "Главная страница" {
+		return nil, errors.New("No product category was found.")
+	}
 	product["categoryName"] = catName
 	catHref, _ := cat.Attr("href")
 	catID := parseCategoryID(catHref)
@@ -259,12 +267,14 @@ func parseCategoryID(attr string) string {
 
 func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 	if fromURL {
-		resp := prepareClient(productPath, 120)
+		resp := prepareClient(productPath, 200)
 
 		doc, err := goquery.NewDocumentFromResponse(resp)
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		defer resp.Body.Close()
 
 		return doc
 	}
@@ -306,7 +316,7 @@ func parsePrice(wrap string) string {
 	numbers := re.FindAllString(priceTrimmed, -1)
 	price := strings.Join(numbers, "")
 	if len(price) == 0 {
-		return "0"
+		return zeroString
 	}
 
 	return formatPrice(price)
@@ -325,7 +335,7 @@ func parseCode(wrap string) string {
 	re := regexp.MustCompile("[0-9]+")
 	code := re.FindAllString(wrapSplitted[0], -1)
 	if len(code) == 0 {
-		return "0"
+		return zeroString
 	}
 
 	return code[0]

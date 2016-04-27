@@ -54,15 +54,12 @@ func TestParseProduct3(t *testing.T) {
 
 	categories := map[string]category{}
 
-	product, err := parseProduct(pr, false, &categories)
+	_, err := parseProduct(pr, false, &categories)
 	if err != nil {
-		t.Fatal("There should be no error")
+		return
 	}
 
-	val, _ := product["available"]
-	if val != "false" {
-		t.Fatal("This product is not available")
-	}
+	t.Fatal("There should be error")
 }
 
 func TestParseProduct2(t *testing.T) {
