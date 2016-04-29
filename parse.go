@@ -56,6 +56,15 @@ func runParse(products []string,
 			count++
 			bar.Increment()
 			go func(product string) {
+
+				defer func() {
+					if r := recover(); r != nil {
+						logError("Product on url: " + product + " was not responsive.")
+						wg.Done()
+						return
+					}
+				}()
+
 				parsedProduct, err := parseProduct(product, true, &categories)
 				if err != nil {
 					logWarning(err.Error() + " on link " +
@@ -267,11 +276,11 @@ func parseCategoryID(attr string) string {
 
 func getDocumentType(productPath string, fromURL bool) *goquery.Document {
 	if fromURL {
-		resp := prepareClient(productPath, 200)
+		resp := prepareClient(productPath, 150)
 
 		doc, err := goquery.NewDocumentFromResponse(resp)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		defer resp.Body.Close()
@@ -303,7 +312,8 @@ func prepareClient(productPath string, setSeconds time.Duration) *http.Response 
 
 	resp, err := client.Get(productPath)
 	if err != nil {
-		log.Fatal(err)
+		logError(err.Error())
+		panic(err)
 	}
 
 	return resp
