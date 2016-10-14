@@ -342,7 +342,8 @@ func parseCode(wrap string) string {
 	wrapTrimmed := strings.TrimSpace(wrap)
 	wrapSplitted := strings.Split(wrapTrimmed, "-")
 
-	re := regexp.MustCompile("[0-9]+")
+	// if first char is D, then save whole code
+	re := regexp.MustCompile("[D]*[0-9]+")
 	code := re.FindAllString(wrapSplitted[0], -1)
 	if len(code) == 0 {
 		return zeroString
